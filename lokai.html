@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARISMA - HIMA Psikologi ULM</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        :root { --dark-blue: #0B192C; --accent-gold: #FFC107; }
+        body { transition: background-color 0.3s, color 0.3s; }
+        body.dark-mode { background-color: #121212; color: #e0e0e0; }
+        
+        .bg-dark-blue { background-color: var(--dark-blue); }
+        .text-dark-blue { color: var(--dark-blue); }
+        .dark-mode .text-dark-blue { color: #66b2ff; }
+        .dark-mode .bg-light { background-color: #1e1e1e !important; }
+        .dark-mode .card { background-color: #242424; color: #fff; border: 1px solid #333 !important; }
+        .dark-mode .navbar { background-color: #1e1e1e !important; border-bottom: 1px solid #333;}
+        .dark-mode .navbar-brand, .dark-mode .nav-link { color: #e0e0e0 !important; }
+        
+        .hero-section { background: linear-gradient(rgba(11, 25, 44, 0.85), rgba(11, 25, 44, 0.9)), url('https://source.unsplash.com/1600x900/?indonesia,parliament') center/cover; color: white; padding: 160px 0; position: relative; }
+        .hover-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .hover-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.15) !important; }
+        .tagline-section { padding: 80px 0; border-top: 4px solid var(--accent-gold); }
+        .footer-custom { background-color: #060e1a; color: #a0aec0; }
+        
+        /* Floating Tools & Animation */
+        .floating-tools { position: fixed; bottom: 30px; right: 30px; z-index: 999; display: flex; flex-direction: column; gap: 15px; }
+        .btn-float { width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: transform 0.2s; color: white; text-decoration: none; cursor: pointer; border: none;}
+        .btn-float:hover { transform: scale(1.1); color: white; }
+        .bg-wa { background-color: #25D366; }
+        .bg-darkmode { background-color: #333; }
+        
+        @keyframes pulse-wa {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+        .wa-pulse { animation: pulse-wa 2s infinite; }
+
+        /* Social Media Hover Fixed */
+        .soc-icon { transition: all 0.3s ease; display: inline-flex; justify-content: center; align-items: center; width: 50px; height: 50px; border-radius: 50%; color: white; border: 2px solid white; }
+        .soc-icon.ig:hover { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285AEB 90%); border-color: transparent; transform: scale(1.15); }
+        .soc-icon.x:hover { background-color: #000; border-color: transparent; transform: scale(1.15); }
+        
+        /* Gacha Spinner Advanced */
+        .gacha-wheel { 
+            width: 100%; height: 100%; border-radius: 50%; 
+            border: 8px solid #0B192C; box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            /* Membuat 8 potong kue */
+            background: repeating-conic-gradient(#FFC107 0 45deg, #0B192C 45deg 90deg); 
+            transition: transform 4s cubic-bezier(0.15, 0.9, 0.25, 1); 
+        }
+        .gacha-btn { transition: transform 0.1s; }
+        .gacha-btn:active { transform: translate(-50%, -50%) scale(0.9) !important; }
+        
+        /* Timeline Agenda Fitur Baru */
+        .timeline { border-left: 4px solid var(--accent-gold); padding-left: 20px; position: relative; margin-left: 20px;}
+        .timeline-item { margin-bottom: 25px; position: relative; }
+        .timeline-item::before { content: ''; position: absolute; left: -30px; top: 5px; width: 16px; height: 16px; border-radius: 50%; background: var(--dark-blue); border: 3px solid #fff; box-shadow: 0 0 0 3px var(--accent-gold); }
+        .dark-mode .timeline-item::before { border-color: #2a2a2a; }
+
+        .news-ticker { background-color: #dc3545; color: white; padding: 8px 15px; font-size: 0.9rem; display: flex; align-items: center; }
+        .news-ticker span { font-weight: bold; margin-right: 15px; background: #212529; padding: 3px 10px; border-radius: 4px; white-space: nowrap; }
+        
+        .admin-only { display: none !important; margin-top: 10px; }
+        .editable-text { transition: all 0.3s; padding: 5px; border-radius: 5px; }
+        .admin-mode .editable-text:hover { background-color: rgba(255, 193, 7, 0.2); outline: 1px dashed var(--accent-gold); cursor: pointer; }
+        .comment-box { background-color: #f8f9fa; border-left: 4px solid var(--dark-blue); padding: 15px; margin-bottom: 10px; border-radius: 0 8px 8px 0; }
+        .dark-mode .comment-box { background-color: #2a2a2a; border-left-color: var(--accent-gold); color: #fff; }
+
+        .tracker-item { padding: 15px; border-left: 5px solid #ccc; background: #fff; margin-bottom: 15px; border-radius: 0 8px 8px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05);}
+        .dark-mode .tracker-item { background: #2a2a2a; color: white;}
+        .status-selesai { border-left-color: #198754; }
+        .status-proses { border-left-color: #ffc107; }
+        .status-mandek { border-left-color: #dc3545; }
+        
+        .carousel-control-prev-icon, .carousel-control-next-icon { filter: invert(1); }
+        .carousel-item { z-index: 10 !important; position: relative; } 
+    </style>
+</head>
+<body id="mainBody">
+
+    <div class="news-ticker">
+        <span>HOT ISSUE</span>
+        <marquee behavior="scroll" direction="left" class="mb-0">
+            DPR RI desak pemerintah pastikan mitigasi bagi puluhan ribu Jemaah Umrah RI yang terdampak eskalasi konflik di Timur Tengah | RUU Penyiaran kembali menuai polemik di kalangan akademisi | Pemira ULM 2026: Menanti gagasan konkrit paslon.
+        </marquee>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-dark-blue fs-4" href="#"><i class="fa-solid fa-landmark dome me-2"></i>KARISMA</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center">
+                    <li class="nav-item"><a class="nav-link active" href="#">Beranda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#kawaljanji">Kawal Janji</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#agenda">Agenda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#berita">Kawal Isu</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#repositori">Perpustakaan</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#interaktif">Interaktif</a></li>
+                    <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+                        <button class="btn btn-outline-primary rounded-pill px-4 fw-bold" data-bs-toggle="modal" data-bs-target="#loginModal" id="loginBtnText">
+                            <i class="fa-solid fa-right-to-bracket me-1"></i> Login Portal
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section id="adminDashboard" class="bg-dark-blue py-4 admin-only w-100 shadow-sm border-bottom border-warning border-3" style="display: none !important;">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="text-white fw-bold m-0"><i class="fa-solid fa-gauge-high text-warning me-2"></i>Dashboard Statistik Admin</h4>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-4"><div class="card bg-white border-0 rounded-3 p-3 shadow-sm d-flex flex-row align-items-center"><i class="fa-solid fa-users fa-3x text-primary me-3"></i><div><h6 class="text-muted mb-1">Pengunjung</h6><h3 class="fw-bold mb-0 text-dark-blue" id="statVisitor">1,245</h3></div></div></div>
+                <div class="col-md-4"><div class="card bg-white border-0 rounded-3 p-3 shadow-sm d-flex flex-row align-items-center"><i class="fa-solid fa-check-to-slot fa-3x text-success me-3"></i><div><h6 class="text-muted mb-1">Suara Polling</h6><h3 class="fw-bold mb-0 text-dark-blue">842</h3></div></div></div>
+                <div class="col-md-4"><div class="card bg-white border-0 rounded-3 p-3 shadow-sm d-flex flex-row align-items-center"><i class="fa-solid fa-envelope-open-text fa-3x text-danger me-3"></i><div><h6 class="text-muted mb-1">Opini Masuk</h6><h3 class="fw-bold mb-0 text-dark-blue">28</h3></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="hero-section text-center">
+        <div class="container">
+            <h1 id="teksBannerUtama" class="display-2 fw-bold mb-2 tracking-wide editable-text" style="letter-spacing: 2px;">[KARISMA]</h1>
+            <h4 id="teksBannerSub" class="mb-4 fw-light editable-text">Parlemen Mahasiswa Universitas Lambung Mangkurat<br>Divisi Kajian Strategis dan Politik</h4>
+            <a href="#profil" class="btn btn-light btn-lg fw-bold text-dark-blue px-5 rounded-pill shadow">Pelajari Selengkapnya</a>
+            <div class="mt-4"><button class="btn btn-sm btn-warning admin-only shadow" onclick="editTeks('teksBannerUtama', 'Judul Banner')"><i class="fa-solid fa-pen"></i> Edit Banner</button></div>
+        </div>
+    </section>
+
+    <section id="profil" class="py-5">
+        <div class="container py-5">
+            <div class="row align-items-center">
+                <div class="col-md-5 text-center mb-4 mb-md-0 position-relative">
+                    <div class="row g-3 justify-content-center align-items-center bg-light rounded-4 p-4 shadow-sm border">
+                        <div class="col-6 text-center"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e6/Lambang_Universitas_Lambung_Mangkurat.svg" alt="Logo ULM" class="img-fluid" style="max-height: 180px;"></div>
+                        <div class="col-6 text-center"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Psychology_symbol.svg/512px-Psychology_symbol.svg.png" alt="Logo Psikologi" class="img-fluid" style="max-height: 160px; filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));"></div>
+                    </div>
+                </div>
+                <div class="col-md-7 px-md-5">
+                    <h2 class="fw-bold mb-3 text-dark-blue">Profil Instansi</h2>
+                    <hr style="width: 50px; height: 4px; background-color: var(--accent-gold); border: none; opacity: 1;">
+                    <p id="teksKutipan" class="lead text-muted fst-italic mb-4 editable-text">"Membangun Ruang Gagasan Kritis terhadap Dinamika Politik"</p>
+                    <p id="teksProfilDetail" class="text-justify editable-text" style="text-align: justify;">Selamat datang di platform KARISMA. Kami hadir sebagai wadah intelektual bagi mahasiswa untuk menyalurkan gagasan, pandangan, dan analisis kritis terhadap isu-isu sosial-politik baik di tingkat regional kampus, daerah, hingga nasional. Mari bersama-sama membangun budaya literasi politik yang kuat, argumentatif, dan berdampak nyata bagi lingkungan sekitar kita.</p>
+                    <div class="d-flex justify-content-end gap-5 mt-5 border-end border-4 border-warning pe-3">
+                        <div class="text-end">
+                            <h6 class="fw-bold mt-2 text-dark-blue mb-0">HIMA Psikologi ULM</h6>
+                            <p class="text-muted small">Divisi Kajian Strategis & Politik</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-sm btn-warning admin-only shadow mt-3" onclick="editTeks('teksProfilDetail', 'Detail Profil')"><i class="fa-solid fa-pen"></i> Edit Teks Profil</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="kawaljanji" class="py-5 bg-light">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-dark-blue d-inline-block border-bottom border-4 border-warning pb-2">KAWAL JANJI KAMPUS</h2>
+                <p class="text-muted mt-2">Transparansi progres kebijakan Rektorat & BEM Universitas Lambung Mangkurat.</p>
+                <button class="btn btn-sm btn-success admin-only mt-2" onclick="tambahJanji()"><i class="fa-solid fa-plus"></i> Tambah Isu/Janji</button>
+            </div>
+            <div class="row justify-content-center"><div class="col-md-8" id="trackerContainer"></div></div>
+        </div>
+    </section>
+
+    <section id="agenda" class="py-5">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-dark-blue d-inline-block border-bottom border-4 border-warning pb-2">AGENDA PERGERAKAN</h2>
+                <p class="text-muted mt-2">Jadwal diskusi publik, konsolidasi, dan audiensi terdekat Kastrat.</p>
+                <button class="btn btn-sm btn-success admin-only mt-2" onclick="tambahAgenda()"><i class="fa-solid fa-calendar-plus"></i> Tambah Agenda</button>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="timeline" id="agendaContainer">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="berita" class="py-5 bg-light">
+        <div class="container py-4">
+            <div class="text-center mb-4">
+                <h2 class="fw-bold text-dark-blue d-inline-block border-bottom border-4 border-warning pb-2">KAWAL ISU POLITIK (HOT TOPIK)</h2>
+                <p class="text-muted mt-2"><i class="fa-solid fa-clock-rotate-left me-2"></i>Pusat arsip 72 naskah kajian Kastrat (Rotasi per jam).</p>
+            </div>
+            
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-8">
+                    <div class="input-group input-group-lg shadow-sm">
+                        <span class="input-group-text bg-white border-end-0 text-muted"><i class="fa-solid fa-magnifying-glass"></i></span>
+                        <input type="text" id="searchInput" class="form-control border-start-0 ps-0" placeholder="Cari isu, judul, atau kata kunci..." onkeyup="cariBerita()">
+                        <button class="btn btn-primary bg-dark-blue px-4 fw-bold" onclick="cariBerita()">Cari</button>
+                    </div>
+                    <button class="btn btn-sm btn-success admin-only d-block mx-auto mt-3 shadow" onclick="tambahBeritaBaru()"><i class="fa-solid fa-plus"></i> Tambah Berita Baru</button>
+                </div>
+            </div>
+            <div class="row g-4" id="dynamicNewsContainer"></div>
+        </div>
+    </section>
+
+    <section id="repositori" class="py-5 bg-dark-blue text-white">
+        <div class="container py-4">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-warning d-inline-block border-bottom border-4 border-light pb-2">PERPUSTAKAAN KAJIAN (PDF)</h2>
+                <p class="text-light opacity-75 mt-2">Unduh naskah akademik, policy brief, dan hasil kajian resmi KARISMA.</p>
+                <button class="btn btn-sm btn-success admin-only mt-2" onclick="tambahDokumen()"><i class="fa-solid fa-upload"></i> Unggah Dokumen Baru</button>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="table-responsive bg-white rounded-3 p-1">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light"><tr><th>Judul Dokumen</th><th>Kategori</th><th>Tanggal Rilis</th><th class="text-center">Aksi</th></tr></thead>
+                            <tbody id="pdfContainer"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="interaktif" class="py-5 bg-light">
+        <div class="container py-4">
+            <div class="row justify-content-center">
+                <div class="col-md-9">
+                    <div id="interactiveCarousel" class="carousel slide p-3" data-bs-ride="false">
+                      <div class="carousel-inner shadow-lg rounded-4 p-5 bg-white border">
+                        
+                        <div class="carousel-item active">
+                            <span class="badge bg-danger mb-3" id="pollProgressTxt">Isu 1 dari 3</span>
+                            <h3 class="fw-bold text-dark-blue text-center mb-2"><i class="fa-solid fa-scale-balanced text-warning me-2"></i>Polling Suara Mahasiswa</h3>
+                            <p class="fs-5 text-center text-muted mb-4" id="pollQuestion">Penilaian Anda terhadap draf RUU Penyiaran?</p>
+                            
+                            <div class="d-grid gap-3" id="pollOptionsBox">
+                                <button class="btn btn-outline-dark text-start fw-bold py-3 px-4 rounded-3" onclick="jawabPoll(0)">A. Menolak Keras, mengancam pers.</button>
+                                <button class="btn btn-outline-dark text-start fw-bold py-3 px-4 rounded-3" onclick="jawabPoll(1)">B. Perlu dikaji ulang parsial.</button>
+                                <button class="btn btn-outline-dark text-start fw-bold py-3 px-4 rounded-3" onclick="jawabPoll(2)">C. Mendukung demi ketertiban.</button>
+                            </div>
+                            
+                            <div id="pollResultsBox" class="mt-4" style="display: none;">
+                                <h5 class="fw-bold text-center mb-4">Hasil Polling Sementara</h5>
+                                <div id="pollBars"></div>
+                                <button class="btn btn-success btn-sm mt-3 mx-auto admin-only d-block" onclick="exportDataCSV('Polling')"><i class="fa-solid fa-file-excel me-1"></i> Unduh Data Excel</button>
+                            </div>
+                        </div>
+
+                        <div class="carousel-item">
+                            <h3 class="fw-bold text-primary text-center mb-2"><i class="fa-solid fa-brain text-warning me-2"></i>Kompas Politik Mahasiswa</h3>
+                            <p class="fs-6 text-center text-muted mb-4">Cari tahu kecenderungan kepribadian pergerakanmu di kampus!</p>
+                            
+                            <div id="quizContainer">
+                                <div class="text-center mt-5 mb-4">
+                                    <button class="btn btn-primary btn-lg bg-dark-blue rounded-pill px-5 fw-bold" onclick="mulaiKuis()">Mulai Tes (8 Soal)</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="carousel-item">
+                            <h3 class="fw-bold text-danger text-center mb-2"><i class="fa-solid fa-dharmachakra text-warning me-2"></i>Spinner Nasihat Pergerakan</h3>
+                            <p class="fs-6 text-center text-muted mb-2">Lelah ngoding dan kajian? Putar roda nasibmu hari ini!</p>
+                            
+                            <div class="mx-auto mt-4" style="width: 260px; height: 260px; position: relative;">
+                                <div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 40px solid #dc3545; z-index: 10; filter: drop-shadow(0 4px 2px rgba(0,0,0,0.3));"></div>
+                                
+                                <div id="gachaWheel" class="gacha-wheel"></div>
+                                
+                                <button onclick="putarGacha()" class="btn btn-light position-absolute top-50 start-50 translate-middle shadow-lg text-dark-blue gacha-btn" style="width: 80px; height: 80px; border-radius: 50%; font-weight: bold; font-size:1.1rem; border: 4px solid #FFC107; z-index: 5;">PUTAR!</button>
+                            </div>
+                            <div class="text-center mt-4" style="min-height: 50px;">
+                                <h5 id="gachaResult" class="fw-bold text-dark-blue mb-0">Klik tombol Putar!</h5>
+                            </div>
+                            
+                            <button class="btn btn-sm btn-warning admin-only d-block mx-auto mt-4" onclick="editGacha()"><i class="fa-solid fa-pen"></i> Edit Daftar Nasihat Gacha</button>
+                        </div>
+                        
+                      </div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#interactiveCarousel" data-bs-slide="prev" style="width: 5%; left: -60px;"><span class="carousel-control-prev-icon bg-dark rounded-circle p-3"></span></button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#interactiveCarousel" data-bs-slide="next" style="width: 5%; right: -60px;"><span class="carousel-control-next-icon bg-dark rounded-circle p-3"></span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="angket" class="py-5">
+        <div class="container py-5">
+            <div class="text-center mb-5"><h2 class="fw-bold text-dark-blue d-inline-block border-bottom border-4 border-warning pb-2">LAYANAN ASPIRASI & OPINI</h2></div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-4">
+                    <div class="card h-100 shadow text-center p-4 border-0 hover-card rounded-4">
+                        <i class="fa-solid fa-clipboard-question fa-3x mb-3 text-primary"></i>
+                        <h5 class="card-title fw-bold">Angket Kritik Saran</h5>
+                        <button class="btn btn-dark w-100 mt-auto rounded-pill fw-bold" onclick="bukaLinkTarget('angket')">Isi Angket</button>
+                        <button class="btn btn-sm btn-warning admin-only w-100 mt-2" onclick="ubahLink('angket')"><i class="fa-solid fa-link"></i> Edit Link</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 shadow text-center p-4 border-0 hover-card rounded-4">
+                        <i class="fa-solid fa-bullhorn fa-3x mb-3 text-danger"></i>
+                        <h5 class="card-title fw-bold">Lapor Pak Senat!</h5>
+                        <button class="btn btn-danger w-100 mt-auto rounded-pill fw-bold" onclick="bukaLinkTarget('lapor')">Lapor Isu</button>
+                        <button class="btn btn-sm btn-warning admin-only w-100 mt-2" onclick="ubahLink('lapor')"><i class="fa-solid fa-link"></i> Edit Link</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 shadow text-center p-4 border-0 hover-card rounded-4 border-bottom border-warning border-4">
+                        <i class="fa-solid fa-feather-pointed fa-3x mb-3 text-warning"></i>
+                        <h5 class="card-title fw-bold">Kirim Tulisan Opini</h5>
+                        <button class="btn btn-outline-warning text-dark w-100 mt-auto rounded-pill fw-bold" onclick="kirimOpini()">Kirim Naskah</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-dark-blue text-white border-top border-warning border-4">
+        <div class="container py-4">
+            <div class="row g-5 align-items-center">
+                <div class="col-md-5">
+                    <h3 class="fw-bold mb-4 text-warning"><i class="fa-solid fa-location-dot me-2"></i>Sekretariat Pusat</h3>
+                    <p class="fs-5 text-light opacity-75">
+                        HIMA Psikologi ULM<br>
+                        Fakultas Kedokteran dan Ilmu Kesehatan (FKIK)<br>
+                        Universitas Lambung Mangkurat<br>
+                        Banjarbaru, Kalimantan Selatan
+                    </p>
+                    <hr class="my-4 border-light opacity-25">
+                    <h5 class="fw-bold mb-3">Ikuti Pergerakan Kami:</h5>
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="https://www.instagram.com/kastratpolpalingcihuy?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="soc-icon ig text-decoration-none"><i class="fa-brands fa-instagram fs-4"></i></a>
+                        <a href="https://x.com" target="_blank" class="soc-icon x text-decoration-none"><i class="fa-brands fa-x-twitter fs-4"></i></a>
+                        <a href="#" class="soc-icon text-decoration-none border-secondary"><i class="fa-brands fa-tiktok fs-4"></i></a>
+                    </div>
+                </div>
+                <div class="col-md-7 position-relative">
+                    <div class="text-end mb-2">
+                        <a href="https://maps.app.goo.gl/YourMapLinkHere" target="_blank" class="btn btn-sm btn-outline-warning rounded-pill"><i class="fa-solid fa-map-location-dot me-1"></i>Buka di Aplikasi Maps</a>
+                    </div>
+                    <div class="rounded-4 overflow-hidden" style="box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 2px solid #FFC107;">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3983.136896263884!2d114.8385!3d-3.4445!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zM8KwMjYnNDAuMiJTIDExNMKwNTAnMTguNiJF!5e0!3m2!1sid!2sid!4v1614138472483!5m2!1sid!2sid" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer-custom py-4 text-center">
+        <div class="container">
+            <h4 class="fw-bold text-white mb-2"><i class="fa-solid fa-landmark dome text-warning me-2"></i>KARISMA</h4>
+            <p class="mb-3 opacity-50 small">Divisi Kajian Strategis dan Politik HIMA Psikologi ULM</p>
+            <small class="text-light opacity-50">© 2026 Universitas Lambung Mangkurat. All rights reserved.</small>
+        </div>
+    </footer>
+
+    <div class="floating-tools">
+        <button onclick="toggleDarkMode()" class="btn-float bg-darkmode shadow" title="Toggle Dark Mode"><i class="fa-solid fa-moon fs-4" id="darkModeIcon"></i></button>
+        <a href="https://wa.me/628311824282?text=Halo%20KARISMA,%20saya%20mahasiswa%20ULM%20ingin%20bertanya%20terkait%20kajian..." target="_blank" class="btn-float bg-wa shadow wa-pulse position-relative" title="Lapor Pak Senat!">
+            <i class="fa-brands fa-whatsapp fs-3"></i>
+            <span class="position-absolute top-0 start-0 translate-middle p-2 bg-danger border border-light rounded-circle"><span class="visually-hidden">Pesan</span></span>
+        </a>
+    </div>
+
+    <div class="modal fade" id="newsReaderModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+          <div class="modal-header border-0 pb-0 position-relative">
+            <button type="button" class="btn-close position-absolute top-0 end-0 m-3 bg-white shadow-sm rounded-circle p-2" data-bs-dismiss="modal" style="z-index: 10;"></button>
+          </div>
+          <div class="modal-body p-0">
+            <img id="modalNewsImg" src="" class="img-fluid w-100" style="max-height: 400px; object-fit: cover;">
+            <div class="p-4 p-md-5">
+                <span id="modalNewsBadge" class="badge mb-3 fs-6"></span>
+                <p class="text-muted small mb-2"><i class="fa-regular fa-calendar me-2"></i><span id="modalNewsDate"></span></p>
+                <h2 id="modalNewsTitle" class="fw-bold mb-3 text-dark-blue"></h2>
+                <div class="d-flex gap-2 mb-4">
+                    <button class="btn btn-sm btn-success rounded-pill px-3" onclick="shareTo('whatsapp')"><i class="fa-brands fa-whatsapp me-1"></i> Bagikan</button>
+                    <button class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="shareTo('copy')"><i class="fa-solid fa-link"></i> Salin</button>
+                </div>
+                <hr class="border-warning border-2 opacity-50 mb-4" style="width: 100px;">
+                <div id="modalNewsContent" class="fs-5 mb-5" style="line-height: 1.8; text-align: justify;"></div>
+                
+                <div class="bg-light p-4 rounded-4 mt-5 dark-mode-fix">
+                    <h4 class="fw-bold mb-4 text-dark-blue"><i class="fa-regular fa-comments me-2 text-primary"></i>Ruang Diskusi Publik</h4>
+                    <div id="commentList" class="mb-4"></div>
+                    <div class="input-group">
+                        <input type="text" id="namaKomentator" class="form-control" placeholder="Nama..." style="max-width: 150px;">
+                        <input type="text" id="isiKomentar" class="form-control" placeholder="Tulis pandanganmu di sini...">
+                        <button class="btn btn-primary bg-dark-blue" onclick="tambahKomentar()"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="loginModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+          <div class="modal-header bg-light border-0"><h5 class="modal-title fw-bold text-dark-blue"><i class="fa-solid fa-shield-halved me-2"></i>Autentikasi</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+          <div class="modal-body p-4">
+            <div class="mb-3"><label class="form-label fw-bold">Nama / Username</label><input type="text" class="form-control bg-light" id="usernameInput"></div>
+            <div class="mb-4"><label class="form-label fw-bold">Password</label><input type="password" class="form-control bg-light" id="passwordInput"></div>
+            <button type="button" class="btn btn-primary w-100 btn-lg rounded-pill fw-bold bg-dark-blue border-0" onclick="prosesLogin()">Masuk</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 1. INIT & LOGIN
+        let isAdminMode = false;
+        let activeNewsId = null;
+        let visitorCount = parseInt(localStorage.getItem('karisma_visitors')) || 1245;
+        if(!sessionStorage.getItem('visited')) { visitorCount += Math.floor(Math.random() * 5) + 1; localStorage.setItem('karisma_visitors', visitorCount); sessionStorage.setItem('visited', 'true'); }
+        document.getElementById('statVisitor').innerText = visitorCount.toLocaleString();
+
+        window.addEventListener('DOMContentLoaded', () => {
+            ['teksBannerUtama', 'teksBannerSub', 'teksKutipan', 'teksProfilDetail'].forEach(id => {
+                if(localStorage.getItem(id)) document.getElementById(id).innerText = localStorage.getItem(id);
+            });
+            renderTracker(); renderAgenda(); renderRepositori(); loadCurrentPoll();
+        });
+
+        function prosesLogin() {
+            const user = document.getElementById('usernameInput').value; const pass = document.getElementById('passwordInput').value;
+            if (user.trim() === '') { Swal.fire('Oops...', 'Nama tidak boleh kosong!', 'error'); return; }
+            if (pass === 'season44') {
+                isAdminMode = true; document.getElementById('mainBody').classList.add('admin-mode');
+                Swal.fire({ icon: 'success', title: 'Akses Terbuka', text: `Mode Manajemen aktif.`, timer: 2000, showConfirmButton: false });
+                document.getElementById('loginBtnText').innerHTML = `<i class="fa-solid fa-user-shield me-1"></i> Mode Admin`;
+                document.getElementById('loginBtnText').classList.replace('btn-outline-primary', 'btn-warning');
+                document.querySelectorAll('.admin-only').forEach(el => el.style.setProperty('display', 'inline-block', 'important'));
+                renderTracker(); renderAgenda(); renderRepositori(); cariBerita();
+            } else {
+                isAdminMode = false; document.getElementById('mainBody').classList.remove('admin-mode');
+                Swal.fire({ icon: 'info', title: 'Berhasil', text: `Halo ${user}.`, timer: 2500, showConfirmButton: false });
+                document.getElementById('loginBtnText').innerHTML = `<i class="fa-regular fa-circle-user me-1"></i> ${user}`;
+                document.querySelectorAll('.admin-only').forEach(el => el.style.setProperty('display', 'none', 'important'));
+            }
+            bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+        }
+
+        // ==========================================
+        // FITUR BARU: TIMELINE AGENDA KAMPUS
+        // ==========================================
+        let defaultAgenda = [
+            { date: "10 Mar 2026", title: "Diskusi Terbuka RUU Penyiaran", desc: "Bertempat di Ruang Kelas B, bersama seluruh elemen mahasiswa FKIK." },
+            { date: "15 Mar 2026", title: "Audiensi Rektorat Terkait UKT", desc: "Perwakilan Kastrat akan bertemu Birokrasi untuk menyerahkan Policy Brief." }
+        ];
+
+        function renderAgenda() {
+            let data = JSON.parse(localStorage.getItem('karisma_agenda')) || defaultAgenda;
+            document.getElementById('agendaContainer').innerHTML = data.map((item, idx) => `
+                <div class="timeline-item">
+                    <span class="badge bg-primary mb-1"><i class="fa-regular fa-calendar-days me-1"></i> ${item.date}</span>
+                    <h5 class="fw-bold mb-1">${item.title}</h5>
+                    <p class="text-muted mb-2">${item.desc}</p>
+                    <button class="btn btn-sm btn-danger admin-only" style="display:none;" onclick="hapusAgenda(${idx})"><i class="fa-solid fa-trash"></i> Hapus Agenda</button>
+                </div>
+            `).join('');
+            if(isAdminMode) document.querySelectorAll('#agenda .admin-only').forEach(el => el.style.setProperty('display', 'inline-block', 'important'));
+        }
+
+        async function tambahAgenda() {
+            const { value: f } = await Swal.fire({
+                title: 'Tambah Agenda Baru',
+                html: '<input id="ag-tgl" class="swal2-input" placeholder="Tanggal (Misal: 20 Mar 2026)">' +
+                      '<input id="ag-jdl" class="swal2-input" placeholder="Nama Agenda">' +
+                      '<input id="ag-desc" class="swal2-input" placeholder="Deskripsi Singkat Tempat/Acara">',
+                preConfirm: () => [document.getElementById('ag-tgl').value, document.getElementById('ag-jdl').value, document.getElementById('ag-desc').value]
+            });
+            if(f && f[1]) {
+                let d = JSON.parse(localStorage.getItem('karisma_agenda')) || defaultAgenda;
+                d.push({ date: f[0], title: f[1], desc: f[2] });
+                localStorage.setItem('karisma_agenda', JSON.stringify(d));
+                renderAgenda();
+            }
+        }
+        function hapusAgenda(idx) {
+            let d = JSON.parse(localStorage.getItem('karisma_agenda')) || defaultAgenda;
+            d.splice(idx,1); localStorage.setItem('karisma_agenda', JSON.stringify(d)); renderAgenda();
+        }
+
+        // ==========================================
+        // GACHA SPINNER (BISA DIEDIT ADMIN)
+        // ==========================================
+        let defaultGachaQuotes = [
+            "Hari ini waktunya baca buku kiri!", "Awas, ada intel Rektorat ngopi di kantin!", 
+            "Skripsi dulu baru aksi, kating pantau kamu!", "eh florin ngapaain dibawah",
+            "Bikin kajian gih, jangan main ML terus!", "Kawal UKT atau kawal dia ke pelaminan?",
+            "Cieee... Cinlok sama partner kepanitiaan.", "Suara mahasiswa adalah suara Tuhan!"
+        ];
+
+        function putarGacha() {
+            const wheel = document.getElementById('gachaWheel');
+            const res = document.getElementById('gachaResult');
+            res.innerHTML = '<span class="text-muted"><i class="fa-solid fa-circle-notch fa-spin me-1"></i> Menunggu takdir...</span>';
+            
+            const randDeg = Math.floor(Math.random() * 360);
+            const totalDeg = randDeg + 1800; // Putar 5x lipat plus random degree
+            
+            // Animasi putar
+            wheel.style.transform = `rotate(${totalDeg}deg)`;
+            
+            // Waktu tunggu sesuai durasi CSS transition (4 detik)
+            setTimeout(() => {
+                let quotes = JSON.parse(localStorage.getItem('karisma_gacha')) || defaultGachaQuotes;
+                const finalQuote = quotes[Math.floor(Math.random() * quotes.length)];
+                
+                // Pop up hasil dengan meriah
+                Swal.fire({
+                    title: '🎯 Takdir Pergerakanmu:',
+                    html: `<h4 class="fw-bold text-danger">"${finalQuote}"</h4>`,
+                    confirmButtonColor: '#0B192C',
+                    confirmButtonText: 'Keren!'
+                }).then(() => {
+                    res.innerHTML = `<span class="badge bg-warning text-dark fs-5 py-2 px-3 shadow-sm" style="white-space:normal;">"${finalQuote}"</span>`;
+                    // Reset wheel ke 0 deg tanpa animasi agar siap diputar lagi
+                    wheel.style.transition = 'none';
+                    wheel.style.transform = 'rotate(0deg)';
+                    setTimeout(() => { wheel.style.transition = 'transform 4s cubic-bezier(0.15, 0.9, 0.25, 1)'; }, 50);
+                });
+            }, 4000);
+        }
+
+        async function editGacha() {
+            let quotes = JSON.parse(localStorage.getItem('karisma_gacha')) || defaultGachaQuotes;
+            const { value: text } = await Swal.fire({
+                title: 'Edit Daftar Nasihat Gacha',
+                input: 'textarea',
+                inputValue: quotes.join('\n'),
+                inputPlaceholder: 'Pisahkan tiap kalimat dengan Enter (Baris Baru)...',
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                inputValidator: (val) => { if (!val) return 'Daftar tidak boleh kosong!' }
+            });
+            if (text) {
+                const newQuotes = text.split('\n').filter(q => q.trim() !== '');
+                localStorage.setItem('karisma_gacha', JSON.stringify(newQuotes));
+                Swal.fire('Tersimpan!', 'Daftar Gacha berhasil diperbarui.', 'success');
+            }
+        }
+
+        // ==========================================
+        // POLLING BERANTAI
+        // ==========================================
+        let currentPollIdx = 0;
+        const pollData = [
+            { q: "Penilaian Anda terhadap draf RUU Penyiaran?", opts: ["Menolak Keras", "Kaji Ulang Parsial", "Mendukung RUU"], stats: [78, 15, 7] },
+            { q: "Mengenai transparansi UKT ULM tahun ini?", opts: ["Sudah Adil & Transparan", "Kurang Sosialisasi", "Sangat Memberatkan"], stats: [12, 35, 53] },
+            { q: "Gaya pergerakan BEM yang paling efektif?", opts: ["Aksi Massa / Turun Jalan", "Audiensi & Data", "Kolaborasi Program"], stats: [40, 45, 15] }
+        ];
+
+        function loadCurrentPoll() {
+            if(currentPollIdx >= pollData.length) {
+                document.getElementById('pollQuestion').innerText = "Terima kasih! Semua isu telah divote.";
+                document.getElementById('pollOptionsBox').style.display = 'none';
+                return;
+            }
+            document.getElementById('pollProgressTxt').innerText = `Isu ${currentPollIdx + 1} dari 3`;
+            document.getElementById('pollQuestion').innerText = pollData[currentPollIdx].q;
+            document.getElementById('pollOptionsBox').style.display = 'grid';
+            document.getElementById('pollResultsBox').style.display = 'none';
+            const btns = document.getElementById('pollOptionsBox').getElementsByTagName('button');
+            btns[0].innerText = `A. ${pollData[currentPollIdx].opts[0]}`;
+            btns[1].innerText = `B. ${pollData[currentPollIdx].opts[1]}`;
+            btns[2].innerText = `C. ${pollData[currentPollIdx].opts[2]}`;
+        }
+
+        function jawabPoll(optIdx) {
+            document.getElementById('pollOptionsBox').style.display = 'none';
+            const resBox = document.getElementById('pollResultsBox');
+            resBox.style.display = 'block';
+            
+            const stats = pollData[currentPollIdx].stats;
+            const colors = ["bg-danger", "bg-warning text-dark", "bg-primary"];
+            document.getElementById('pollBars').innerHTML = pollData[currentPollIdx].opts.map((opt, i) => `
+                <div class="mb-3"><div class="d-flex justify-content-between mb-1"><span class="fw-bold">${opt}</span><span>${stats[i]}%</span></div>
+                <div class="progress" style="height: 20px;"><div class="progress-bar ${colors[i]} poll-bar" style="width: ${stats[i]}%"></div></div></div>
+            `).join('');
+
+            setTimeout(() => { currentPollIdx++; loadCurrentPoll(); }, 3500);
+        }
+
+        // ==========================================
+        // KUIS 8 SOAL INLINE
+        // ==========================================
+        let kuisSkor = 0; let kuisStep = 0;
+        const kuisSoal = [
+            { q: "1. Kebijakan kampus merugikan mahasiswa. Langkahmu?", opts: ["Bikin kajian & infografis IG (2)", "Konsolidasi aksi turun rektorat (3)", "Biarin aja asal IPK aman (1)"] },
+            { q: "2. Ketika ada rapat akbar Ormawa, kamu biasanya...", opts: ["Duduk di belakang main HP (1)", "Jadi inisiator mosi/debat (3)", "Mencatat notulensi solusi (2)"] },
+            { q: "3. Menurutmu fungsi BEM/Senat adalah...", opts: ["Penyambung lidah & negosiator (2)", "Alat perlawanan oligarki kampus (3)", "Penyelenggara pensi & proker (1)"] },
+            { q: "4. Melihat isu nasional yang sedang panas, kamu?", opts: ["Ikut demo walau panas-panasan (3)", "Ikut petisi online & donasi (2)", "Scroll TikTok cari hiburan (1)"] },
+            { q: "5. Gaya bahasamu saat berpendapat?", opts: ["Sistematis, pakai data jurnal (2)", "Agitatif, berapi-api (3)", "Netral, cari aman (1)"] },
+            { q: "6. Tokoh pergerakan favoritmu?", opts: ["Munir / Wiji Thukul (3)", "Najwa Shihab / Akademisi (2)", "Gak punya (1)"] },
+            { q: "7. Tujuan utama kuliah menurutmu?", opts: ["Menjadi agen perubahan sosial (3)", "Membangun relasi strategis (2)", "Lulus cepat & kerja (1)"] },
+            { q: "8. Jika kamu ditawari masuk Kastrat, kamu akan?", opts: ["Siap jadi garda terdepan! (3)", "Siap di tim riset/kajian (2)", "Nolak, takut sibuk (1)"] }
+        ];
+
+        function mulaiKuis() { kuisSkor = 0; kuisStep = 0; renderKuis(); }
+        function renderKuis() {
+            const box = document.getElementById('quizContainer');
+            if(kuisStep >= kuisSoal.length) { tampilHasilKuis(box); return; }
+            const s = kuisSoal[kuisStep];
+            box.innerHTML = `
+                <div class="progress mb-4" style="height: 10px;"><div class="progress-bar bg-warning" style="width: ${(kuisStep/8)*100}%"></div></div>
+                <h5 class="fw-bold mb-4 text-center">${s.q}</h5>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-dark text-start p-3" onclick="jawabKuisInline(${s.opts[0].slice(-2,-1)})">${s.opts[0].slice(0,-4)}</button>
+                    <button class="btn btn-outline-dark text-start p-3" onclick="jawabKuisInline(${s.opts[1].slice(-2,-1)})">${s.opts[1].slice(0,-4)}</button>
+                    <button class="btn btn-outline-dark text-start p-3" onclick="jawabKuisInline(${s.opts[2].slice(-2,-1)})">${s.opts[2].slice(0,-4)}</button>
+                </div>
+            `;
+        }
+        function jawabKuisInline(poin) { kuisSkor += parseInt(poin); kuisStep++; renderKuis(); }
+        function tampilHasilKuis(box) {
+            let hasil = "", desc = "", bg = "";
+            if(kuisSkor >= 20) { hasil = "Aktivis Radikal-Progresif 🔥"; bg="danger"; desc = "Kamu punya jiwa revolusioner! Cocok di barisan depan aksi massa Kastrat."; }
+            else if(kuisSkor >= 17) { hasil = "Think-Tank Strategis 🧠"; bg="primary"; desc = "Data adalah senjatamu. Kamu negosiator dan peracik kajian policy brief yang handal."; }
+            else if(kuisSkor >= 14) { hasil = "Oportunis-Pragmatis 💼"; bg="warning text-dark"; desc = "Fokus pada keuntungan karir, lobi birokrasi, dan win-win solution."; }
+            else if(kuisSkor >= 11) { hasil = "Negosiator Diplomatik 🤝"; bg="success"; desc = "Kamu penengah konflik sejati. Lebih suka dialog damai daripada keributan."; }
+            else if(kuisSkor >= 9) { hasil = "Konservatif-Statis 🏛️"; bg="secondary"; desc = "Kamu tidak suka sistem yang goyah. Anti-demo dan sangat taat aturan."; }
+            else { hasil = "Akademisi Pasif 📚"; bg="dark"; desc = "Kupu-kupu sejati! Fokus utama kamu adalah IPK 4.0 dan lulus tepat waktu."; }
+            
+            box.innerHTML = `
+                <div class="text-center p-4 bg-light rounded-4 border">
+                    <span class="badge bg-${bg} fs-6 mb-2">Hasil Kompas Politik</span>
+                    <h3 class="fw-bold mb-3">${hasil}</h3>
+                    <p class="text-muted mb-4">${desc}</p>
+                    <button class="btn btn-dark rounded-pill" onclick="Swal.fire('Tersalin!', 'Siap dipamerkan ke Instastory!', 'success')"><i class="fa-solid fa-camera me-1"></i> Pamerkan ke Story</button>
+                    <button class="btn btn-outline-secondary rounded-pill ms-2" onclick="mulaiKuis()">Ulang Tes</button>
+                </div>
+            `;
+        }
+
+        // ==========================================
+        // KODE LAMA TETAP AMAN (Tracker, PDF, Berita)
+        // ==========================================
+        async function editTeks(elId, label) {
+            const el = document.getElementById(elId);
+            const { value: textBaru } = await Swal.fire({ title: `Edit ${label}`, input: 'textarea', inputValue: el.innerText, showCancelButton: true });
+            if (textBaru) { el.innerText = textBaru; localStorage.setItem(elId, textBaru); Swal.fire('Tersimpan!','','success');}
+        }
+        let links = { angket: localStorage.getItem('link_angket')||'#', lapor: localStorage.getItem('link_lapor')||'#' };
+        function bukaLinkTarget(t) { window.open(links[t], '_blank'); }
+        async function ubahLink(t) {
+            const { value: u } = await Swal.fire({ title: `Edit Link ${t}`, input: 'url', inputValue: links[t], showCancelButton: true });
+            if (u) { links[t] = u; localStorage.setItem(`link_${t}`, u); Swal.fire('Tersimpan', '', 'success');}
+        }
+
+        let defaultTracker = [
+            { id: 1, text: "Transparansi Penurunan UKT", status: "Proses", color: "status-proses", icon: "fa-spinner fa-spin text-warning" },
+            { id: 2, text: "Perbaikan Fasilitas Kelas B", status: "Mandek", color: "status-mandek", icon: "fa-circle-xmark text-danger" }
+        ];
+        function renderTracker() {
+            let dataT = JSON.parse(localStorage.getItem('karisma_tracker')) || defaultTracker;
+            document.getElementById('trackerContainer').innerHTML = dataT.map((item, idx) => `
+                <div class="tracker-item ${item.color} d-flex justify-content-between align-items-center">
+                    <div><h5 class="fw-bold mb-1">${item.text}</h5><span class="badge bg-light text-dark border"><i class="fa-solid ${item.icon} me-1"></i> ${item.status}</span></div>
+                    <div class="admin-only" style="display:none;"><button class="btn btn-sm btn-danger" onclick="hapusTracker(${idx})">Hapus</button></div>
+                </div>`).join('');
+            if(isAdminMode) document.querySelectorAll('#kawaljanji .admin-only').forEach(el => el.style.setProperty('display', 'inline-block', 'important'));
+        }
+        async function tambahJanji() {
+            const { value: t } = await Swal.fire({ title: 'Tambah Isu', input: 'text', showCancelButton: true });
+            if (t) { let d = JSON.parse(localStorage.getItem('karisma_tracker')) || defaultTracker; d.push({ id: Date.now(), text: t, status: "Proses", color: "status-proses", icon: "fa-spinner fa-spin text-warning" }); localStorage.setItem('karisma_tracker', JSON.stringify(d)); renderTracker(); }
+        }
+        function hapusTracker(idx) { let d = JSON.parse(localStorage.getItem('karisma_tracker')) || defaultTracker; d.splice(idx,1); localStorage.setItem('karisma_tracker', JSON.stringify(d)); renderTracker(); }
+
+        let defaultRepo = [{ judul: "Policy Brief UKT", kategori: "Kampus", tgl: "Mar 2026", link: "#" }];
+        function renderRepositori() {
+            let d = JSON.parse(localStorage.getItem('karisma_repo')) || defaultRepo;
+            document.getElementById('pdfContainer').innerHTML = d.map((item, idx) => `
+                <tr><td class="fw-bold"><i class="fa-solid fa-file-pdf text-danger me-2"></i>${item.judul}</td><td><span class="badge bg-secondary">${item.kategori}</span></td><td class="small">${item.tgl}</td>
+                <td class="text-center"><a href="${item.link}" target="_blank" class="btn btn-sm btn-primary">Unduh</a><button class="btn btn-sm btn-danger admin-only ms-1" style="display:none;" onclick="hapusDokumen(${idx})"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
+            if(isAdminMode) document.querySelectorAll('#pdfContainer .admin-only').forEach(el => el.style.setProperty('display', 'inline-block', 'important'));
+        }
+        async function tambahDokumen() {
+            const { value: f } = await Swal.fire({ title: 'Upload PDF', html: '<input id="sj" class="swal2-input" placeholder="Judul"><input id="sk" class="swal2-input" placeholder="Kategori"><input id="sl" class="swal2-input" placeholder="Link Drive">', preConfirm: () => [document.getElementById('sj').value, document.getElementById('sk').value, document.getElementById('sl').value] });
+            if (f && f[0]) { let d = JSON.parse(localStorage.getItem('karisma_repo')) || defaultRepo; d.unshift({ judul: f[0], kategori: f[1], tgl: "Baru Saja", link: f[2] }); localStorage.setItem('karisma_repo', JSON.stringify(d)); renderRepositori(); }
+        }
+        function hapusDokumen(idx) { let d = JSON.parse(localStorage.getItem('karisma_repo')) || defaultRepo; d.splice(idx,1); localStorage.setItem('karisma_repo', JSON.stringify(d)); renderRepositori(); }
+
+        let newsDatabase = [];
+        for (let i = 0; i < 72; i++) { newsDatabase.push({ id: i, title: `Kajian Strategis #${i+1}`, date: "Maret 2026", badge: "Nasional", color: "bg-dark", img: `https://source.unsplash.com/600x400/?politics&sig=${i}`, short: "Ringkasan isu publik.", full: "<p>Kajian lengkap.</p>" }); }
+        
+        function renderBerita(data, start=0, rotasi=false) {
+            document.getElementById('dynamicNewsContainer').innerHTML = data.slice(0, rotasi?3:6).map((n, i) => `
+                <div class="col-md-4"><div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden bg-white"><img src="${n.img}" class="card-img-top"><div class="card-body d-flex flex-column"><span class="badge ${n.color} mb-2 align-self-start">${n.badge}</span><h5 class="fw-bold">${n.title}</h5><button class="btn btn-outline-primary rounded-pill mt-auto w-100" onclick='bukaBacaBerita(${n.id})'>Baca Kajian</button><div class="admin-only gap-2 mt-2 pt-2 border-top" style="display:none;"><button class="btn btn-sm btn-danger w-100" onclick="hapusBerita(${n.id})">Hapus</button></div></div></div></div>
+            `).join('');
+            if(isAdminMode) document.querySelectorAll('#berita .admin-only').forEach(el => el.style.setProperty('display', 'block', 'important'));
+        }
+        function cariBerita() {
+            let kw = document.getElementById('searchInput').value.toLowerCase();
+            if(kw === '') { const hr = new Date().getHours(); renderBerita(newsDatabase.slice(hr*3, hr*3+3), hr*3, true); } 
+            else { renderBerita(newsDatabase.filter(n => n.title.toLowerCase().includes(kw)), 0, false); }
+        }
+        function bukaBacaBerita(id) {
+            const n = newsDatabase.find(x => x.id === id); activeNewsId = id; 
+            document.getElementById('modalNewsImg').src = n.img; document.getElementById('modalNewsBadge').innerText = n.badge; document.getElementById('modalNewsTitle').innerText = n.title; document.getElementById('modalNewsContent').innerHTML = n.full; renderKomentar(id); new bootstrap.Modal(document.getElementById('newsReaderModal')).show();
+        }
+        function renderKomentar(id) {
+            const d = JSON.parse(localStorage.getItem('komentar_berita_' + id)) || [];
+            document.getElementById('commentList').innerHTML = d.length === 0 ? '<p class="text-muted small">Belum ada diskusi.</p>' : d.map(k => `<div class="comment-box"><b>${k.nama}</b><p class="mb-0">${k.isi}</p></div>`).join('');
+        }
+        function tambahKomentar() {
+            let d = JSON.parse(localStorage.getItem('komentar_berita_' + activeNewsId)) || [];
+            d.push({ nama: document.getElementById('namaKomentator').value || 'Anonim', isi: document.getElementById('isiKomentar').value });
+            localStorage.setItem('komentar_berita_' + activeNewsId, JSON.stringify(d)); renderKomentar(activeNewsId); document.getElementById('isiKomentar').value='';
+        }
+
+        async function kirimOpini() { await Swal.fire('Kirim Naskah', 'Kirim ke redaksi KARISMA.', 'info'); }
+        function exportDataCSV() { Swal.fire('Terunduh', 'File CSV hasil polling didownload.', 'success'); }
+        function shareTo(p) { Swal.fire('Membuka', 'Membagikan ke ' + p, 'success'); }
+        function toggleDarkMode() { document.body.classList.toggle('dark-mode'); document.getElementById('darkModeIcon').className = document.body.classList.contains('dark-mode') ? 'fa-solid fa-sun fs-4 text-warning' : 'fa-solid fa-moon fs-4 text-white'; }
+        
+        window.onload = () => { cariBerita(); setInterval(() => { const hr = new Date().getHours(); if (!window.lastHour || window.lastHour !== hr) { cariBerita(); window.lastHour = hr; } }, 60000); };
+    </script>
+</body>
+</html>
